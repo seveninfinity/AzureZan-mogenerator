@@ -134,32 +134,32 @@ const struct <$managedObjectClassName$>UserInfo <$managedObjectClassName$>UserIn
 // Azure Sync
 + (void)pushToCloud
 {
-    [_<$managedObjectClassName$> pushToCloudDone:nil];
+    [_<$managedObjectClassName$> pushToCloudCompletion:nil];
 }
-+ (void)pushToCloudDone:(MSSyncBlock)completion
++ (void)pushToCloudCompletion:(MSSyncBlock)completion
 {
     [[[_<$managedObjectClassName$> azureClient] syncContext] pushWithCompletion:completion];
 }
 
 + (void)pullFromCloud
 {
-    [_<$managedObjectClassName$> pullFromCloudDone:nil];
+    [_<$managedObjectClassName$> pullFromCloudCompletion:nil];
 }
-+ (void)pullFromCloudDone:(MSSyncBlock)completion
++ (void)pullFromCloudCompletion:(MSSyncBlock)completion
 {
     [[_<$managedObjectClassName$> azureSyncTable] pullWithQuery:[AzureManager queryForTableNamed:@"<$managedObjectClassName$>"]
                                           queryId:@"<$managedObjectClassName$>"
                                        completion:completion];
 }
 
-+ (void)pushAndpullFromCloud
++ (void)sync
 {
-    [_<$managedObjectClassName$> pushToCloudDone:nil];
+    [_<$managedObjectClassName$> syncCompletion:nil];
 }
-+ (void)pushAndpullFromCloudDone:(MSSyncBlock)completion
++ (void)syncCompletion:(MSSyncBlock)completion
 {
-    [_<$managedObjectClassName$> pullFromCloudDone:^(NSError *error) {
-        [_<$managedObjectClassName$> pullFromCloudDone:completion];
+    [_<$managedObjectClassName$> pushToCloudCompletion:^(NSError *error) {
+        [_<$managedObjectClassName$> pullFromCloudCompletion:completion];
     }];
 }
 
@@ -188,7 +188,7 @@ const struct <$managedObjectClassName$>UserInfo <$managedObjectClassName$>UserIn
 }
 -(void)deleteWithCompletion:(MSSyncBlock)completion
 {
-    [[_<$managedObjectClassName$> azureSyncTable] delete:[_<$managedObjectClassName$> dictionaryRepresentation] completion:completion];
+    [[_<$managedObjectClassName$> azureSyncTable] delete:[self dictionaryRepresentation] completion:completion];
 }
 +(void)deleteItem:(NSDictionary *)item completion:(MSSyncBlock)completion
 {

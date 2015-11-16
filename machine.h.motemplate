@@ -9,6 +9,8 @@
 #import "<$additionalHeaderFileName$>"
 <$endif$>
 
+#import "AzureZan.h"
+
 <$if noninheritedAttributes.@count > 0$>
 extern const struct <$managedObjectClassName$>Attributes {<$foreach Attribute noninheritedAttributes do$>
 	<$if TemplateVar.arc$>__unsafe_unretained<$endif$> NSString *<$Attribute.name$>;<$endforeach do$>
@@ -56,37 +58,45 @@ extern const struct <$managedObjectClassName$>UserInfo {<$foreach UserInfo userI
 + (id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 
+#pragma mark -
+#pragma mark - Azure Additions (C-R-U-D)
+#pragma mark - Create Item
++(void)createItem:(NSDictionary *)item completion:(MSSyncItemBlock)completion;
+
+#pragma mark - Read Item
++(void)readItemWithId:(NSString *)itemId completion:(MSItemBlock)completion;
 + (_<$managedObjectClassName$>*)managedObjectWithAzureItemId:(NSString*)itemId;
 
-// Static Info
+#pragma mark - Update Item
++(void)updateItem:(NSDictionary *)item completion:(MSSyncBlock)completion;
+-(void)updateWithDictionary:(NSDictionary *)item completion:(MSSyncBlock)completion;
+
+#pragma mark - Delete Item
+-(void)deleteWithCompletion:(MSSyncBlock)completion;
++(void)deleteItem:(NSDictionary *)item completion:(MSSyncBlock)completion;
+
+#pragma mark - Azure Push, Pull, And Sync
++ (void)pushToCloud;
++ (void)pushToCloudCompletion:(MSSyncBlock)completion;
++ (void)pullFromCloud;
++ (void)pullFromCloudCompletion:(MSSyncBlock)completion;
++ (void)sync;
++ (void)syncCompletion:(MSSyncBlock)completion;
+
+#pragma mark - Info
 + (NSString*)entityName;
 + (NSArray*)properties;
 
-// Azure Utilities
+#pragma mark - Utilities
 - (NSDictionary *)dictionaryRepresentation;
 + (NSArray*)allLocalRecords;
 
-// Azure Table Abstractions
+#pragma mark - Windows Azure Mobile Services Underlying SDK
 + (MSSyncTable*)azureSyncTable;
 + (MSTable*)azureTable;
 + (MSClient*)azureClient;
 + (MSSyncContext*)azureSyncContext;
 
-// Azure CRUD Abstractions
-+(void)createItem:(NSDictionary *)item completion:(MSSyncItemBlock)completion;
-+(void)readItemWithId:(NSString *)itemId completion:(MSItemBlock)completion;
-+(void)updateItem:(NSDictionary *)item completion:(MSSyncBlock)completion;
--(void)updateWithDictionary:(NSDictionary *)item completion:(MSSyncBlock)completion;
--(void)deleteWithCompletion:(MSSyncBlock)completion;
-+(void)deleteItem:(NSDictionary *)item completion:(MSSyncBlock)completion;
-
-// Azure Push, Pull, And Both
-+ (void)pushToCloud;
-+ (void)pushToCloudDone:(MSSyncBlock)completion;
-+ (void)pullFromCloud;
-+ (void)pullFromCloudDone:(MSSyncBlock)completion;
-+ (void)pushAndpullFromCloud;
-+ (void)pushAndpullFromCloudDone:(MSSyncBlock)completion;
 
 
 @property (nonatomic, readonly, strong) <$managedObjectClassName$>ID* objectID;
